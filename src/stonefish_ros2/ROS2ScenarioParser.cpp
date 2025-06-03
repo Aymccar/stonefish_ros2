@@ -40,6 +40,7 @@
 #include "geometry_msgs/msg/twist_with_covariance_stamped.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/magnetic_field.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/range.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
@@ -773,6 +774,10 @@ Sensor* ROS2ScenarioParser::ParseSensor(XMLElement* element, const std::string& 
 
                     case ScalarSensorType::IMU:
                         pubs[sensorName] = nh_->create_publisher<sensor_msgs::msg::Imu>(topicStr, queueSize);
+                        break;
+
+                    case ScalarSensorType::SIMPLE_MAGNETOMETER:
+                        pubs[sensorName] = nh_->create_publisher<sensor_msgs::msg::MagneticField>(topicStr, queueSize);
                         break;
 
                     case ScalarSensorType::DVL:

@@ -38,6 +38,7 @@ namespace sf
     class Accelerometer;
     class Gyroscope;
     class IMU;
+    class SimpleMagnetometer;
     class Pressure;
     class DVL;
     class GPS;
@@ -68,6 +69,7 @@ namespace sf
         void PublishAccelerometer(rclcpp::PublisherBase::SharedPtr pub, Accelerometer* acc) const;
         void PublishGyroscope(rclcpp::PublisherBase::SharedPtr pub, Gyroscope* gyro) const;
         void PublishIMU(rclcpp::PublisherBase::SharedPtr pub, IMU* imu) const;
+        void PublishSimpleMagnetometer(rclcpp::PublisherBase::SharedPtr pub, SimpleMagnetometer* simple_magnetometer) const;
         void PublishPressure(rclcpp::PublisherBase::SharedPtr pub, Pressure* press) const;
         void PublishDVL(rclcpp::PublisherBase::SharedPtr pub, DVL* dvl) const;
         void PublishDVLAltitude(rclcpp::PublisherBase::SharedPtr pub, DVL* dvl) const;

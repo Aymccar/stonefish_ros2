@@ -234,6 +234,10 @@ void ROS2SimulationManager::SimulationStepCompleted(Scalar timeStep)
                     interface_->PublishIMU(pubs_.at(sensor->getName()), (IMU*)sensor);
                     break;
 
+                case ScalarSensorType::SIMPLE_MAGNETOMETER:
+                    interface_->PublishSimpleMagnetometer(pubs_.at(sensor->getName()), (SimpleMagnetometer*)sensor);
+                    break;
+
                 case ScalarSensorType::ODOM:
                     interface_->PublishOdometry(pubs_.at(sensor->getName()), (Odometry*)sensor);
                     break;

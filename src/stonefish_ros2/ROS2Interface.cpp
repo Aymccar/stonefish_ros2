@@ -30,6 +30,7 @@
 #include "geometry_msgs/msg/wrench_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/magnetic_field.hpp"
 #include "sensor_msgs/msg/fluid_pressure.hpp"
 #include "sensor_msgs/msg/range.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
@@ -56,6 +57,7 @@
 #include <Stonefish/sensors/scalar/Pressure.h>
 #include <Stonefish/sensors/scalar/DVL.h>
 #include <Stonefish/sensors/scalar/IMU.h>
+#include <Stonefish/sensors/scalar/SimpleMagnetometer.h>
 #include <Stonefish/sensors/scalar/GPS.h>
 #include <Stonefish/sensors/scalar/INS.h>
 #include <Stonefish/sensors/scalar/ForceTorque.h>
@@ -180,6 +182,31 @@ void ROS2Interface::PublishIMU(rclcpp::PublisherBase::SharedPtr pub, IMU* imu) c
     msg.linear_acceleration_covariance[4] = accStdDev.getY() * accStdDev.getY();
     msg.linear_acceleration_covariance[8] = accStdDev.getZ() * accStdDev.getZ();
     std::static_pointer_cast<rclcpp::Publisher<sensor_msgs::msg::Imu>>(pub)->publish(msg);
+}
+
+void ROS2Interface::PublishSimpleMagnetometer(rclcpp::PublisherBase::SharedPtr pub, SimpleMagnetometer* simple_magnetometer) const
+{
+    Sample s = simple_magnetometer->getLastSample();
+
+    sf::Vector3 magStdDev = sf::Vector3(simple_magnetometer->getSensorChannelDescription(0).stdDev,
+                                        simple_magnetometer->getSensorChannelDescription(1).stdDev,
+                                        simple_magnetometer->getSensorChannelDescription(2).stdDev);
+
+    sensor_msgs::msg::MagneticField msg;
+
+    msg.header.stamp = nh_->get_clock()->now();
+    msg.header.frame_id = simple_magnetometer->getName();
+
+    msg.magnetic_field.x = s.getValue(0);
+    msg.magnetic_field.y = s.getValue(1);
+    msg.magnetic_field.z = s.getValue(2);
+
+    //Variance is sigma^2!
+    msg.magnetic_field_covariance[0] = magStdDev.getX() * magStdDev.getX();
+    msg.magnetic_field_covariance[4] = magStdDev.getY() * magStdDev.getY();
+    msg.magnetic_field_covariance[8] = magStdDev.getZ() * magStdDev.getZ();
+
+    std::static_pointer_cast<rclcpp::Publisher<sensor_msgs::msg::MagneticField>>(pub)->publish(msg);
 }
 
 void ROS2Interface::PublishPressure(rclcpp::PublisherBase::SharedPtr pub, Pressure* press) const
